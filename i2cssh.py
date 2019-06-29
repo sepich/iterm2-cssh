@@ -38,7 +38,6 @@ async def main(connection):
                 sessions[col] = await sessions[col-1].async_split_pane(vertical=True, profile=profile, profile_customizations=tmp_profile)
         col = (col+1) % cols
 
-
     # enable broadcast
     for session in tab.sessions:
         await iterm2.MainMenu.async_select_menu_item(connection, 'Broadcast Input.Broadcast Input to All Panes in Current Tab')
