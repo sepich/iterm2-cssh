@@ -5,10 +5,10 @@ if ! which fzf &>/dev/null; then
   exit 1
 fi
 
-res=`cat ~/.ssh/known_hosts | tr ',' ' ' | awk '{gsub(/\]|\[/,"",$1); print $1}' | sort -u | fzf -m --reverse --print-query --exact --no-mouse`
-if [ $? -gt 1 ]; then bash --login; exit; fi #ESC pressed - local session
-q=`echo "$res" | head -1`
-c=`echo "$res" | tail -n +2`
+hosts=`cat ~/.ssh/known_hosts | tr ',' ' ' | awk '{gsub(/\]|\[/,"",$1); print $1}' | sort -u | fzf -m --reverse --print-query --exact --no-mouse`
+if [ $? -gt 1 ]; then exec bash --login; fi  # ESC pressed - local session
+q=`echo "$hosts" | head -1`
+c=`echo "$hosts" | tail -n +2`
 
 # empty choice, try query
 if [ -n "$q" -a -z "$c" ]; then
