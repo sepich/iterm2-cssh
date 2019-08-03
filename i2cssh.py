@@ -1,17 +1,19 @@
 #!/usr/bin/env python3.7
+import argparse
 import iterm2
-import sys
 from math import sqrt, ceil
 
 profile = 'Default'
 
+parser = argparse.ArgumentParser(description='csshX like tool for iTerm2v3.3 via Python-API')
+parser.add_argument('-o', dest='options', help='arguments to be passed to ssh when making the connection')
+parser.add_argument('hosts', metavar='[user@]hostname', nargs='+')
+args = parser.parse_args()
+
 
 async def main(connection):
-    if len(sys.argv) == 1:
-        print('No hosts to connect to found! Usage is:\ni2cssh.py host1 [host2 ...]')
-        return
-    hosts = sys.argv[1:]
-    cols = 3 if len(hosts) <= 3 else ceil(sqrt(len(hosts)))
+    command = f'ssh -o {args.options}' if args.options else 'ssh'
+    cols = 3 if len(args.hosts) <= 3 else ceil(sqrt(len(args.hosts)))
     app = await iterm2.async_get_app(connection)
     window = app.current_terminal_window
 
@@ -19,10 +21,10 @@ async def main(connection):
     tab = None
     sessions = [None for x in range(cols)]  # sessions to split down
     col = 0
-    for host in hosts:
+    for host in args.hosts:
         tmp_profile = iterm2.LocalWriteOnlyProfile()
         tmp_profile.set_use_custom_command('Yes')
-        tmp_profile.set_command(f'ssh {host}')
+        tmp_profile.set_command(f'{command} {host}')
         tmp_profile.set_close_sessions_on_end(False)
 
         if not tab:  # create new tab first
